@@ -41,29 +41,11 @@ class PostfixCalculatorTest extends TestCase
 
         $calc_formula   = '1 2 + 3 4 * 5 / -';
         $this->assertSame(0.6, PostfixCalculator::calculate($calc_formula, $replace_value_list));
-    }
 
-    /**
-     * 配列を後置記法として計算します。のテスト。
-     */
-    public function testCalculatePostfix() : void
-    {
-        $formulas   = [1.0];
-        $this->assertSame(1.0, PostfixCalculator::calculatePostfix($formulas));
+        $calc_formula   = '12 34 + 5 *';
+        $this->assertSame(230.0, PostfixCalculator::calculate($calc_formula, $replace_value_list));
 
-        $formulas   = [1.0, 2.0, '+', 3.0, 4.0, '+', '+'];
-        $this->assertSame(10.0, PostfixCalculator::calculatePostfix($formulas));
-
-        $formulas   = [1.0, 2.0, '+', 3.0, 4.0, '-', '*'];
-        $this->assertSame(-3.0, PostfixCalculator::calculatePostfix($formulas));
-
-        $formulas   = [1.0, 2.0, 3.0, '*', '+', 4.0, '-'];
-        $this->assertSame(3.0, PostfixCalculator::calculatePostfix($formulas));
-
-        $formulas   = [1.0, 2.0, 3.0, '*', '+', 4.0, '-'];
-        $this->assertSame(3.0, PostfixCalculator::calculatePostfix($formulas));
-
-        $formulas   = [1.0, 2.0, '+', 3.0, 4.0, '*', 5.0, '/', '-'];
-        $this->assertSame(0.6000000000000001, PostfixCalculator::calculatePostfix($formulas));
+        $calc_formula       = 'SUM(1,2,3) 4 + MIN(1,2,3) - MAX(1,2,3) * POW(2,POW(2,1)) /';
+        $this->assertSame(6.75, PostfixCalculator::calculate($calc_formula, $replace_value_list));
     }
 }

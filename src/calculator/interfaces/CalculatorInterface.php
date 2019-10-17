@@ -342,4 +342,12 @@ interface CalculatorInterface
      * @return  float   計算結果
      */
     public static function calculate(string $calc_formula, array $replace_value_list = []) : float;
+
+    /**
+     * 配列を後置記法として計算します。
+     *
+     * @param   array   $formulas   後置記法の計算式配列
+     * @return  float   計算結果
+     */
+    public static function calculatePostfix(array $formulas) : float;
 }

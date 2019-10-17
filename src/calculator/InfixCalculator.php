@@ -46,7 +46,7 @@ class InfixCalculator implements CalculatorInterface
             return (float) $replace_value_list[$calc_formula];
         }
 
-        return (float)  PostfixCalculator::calculatePostfix(
+        return (float)  static::calculatePostfix(
             static::infixToPostfix(
                 static::calculateAggregateFunctions(
                     static::calculateMathFunctions(
