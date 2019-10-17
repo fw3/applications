@@ -180,6 +180,11 @@ interface CalculatorInterface
     // 数学関数
     //----------------------------------------------
     /**
+     * @var string  数学関数群
+     */
+    public const MATH_FUNC      = 'MATH_FUNC';
+
+    /**
      * @var string  数学関数：指数表現
      */
     public const MATH_FUNC_POW  = 'POW';
@@ -243,6 +248,11 @@ interface CalculatorInterface
     // 集約関数
     //----------------------------------------------
     /**
+     * @var string  集約関数群
+     */
+    public const AGGR_FUNC          = 'AGGR_FUNC';
+
+    /**
      * @var string  集約関数：含まれる要素数
      */
     public const AGGR_FUNC_COUNT    = 'COUNT';
@@ -296,6 +306,14 @@ interface CalculatorInterface
     public static function encoding($encoding = null) : string;
 
     /**
+     * 使用を差し止める関数を設定・取得します。
+     *
+     * @param   array           $deny_functions 使用を差し止める関数
+     * @return  array|string    使用を差し止める関数またはこのクラスパス
+     */
+    public static function denyFunctions(?array $deny_functions = null);
+
+    /**
      * 数学関数を実行します。
      *
      * @param   array   $numerical_formula  計算対象リスト
@@ -342,4 +360,12 @@ interface CalculatorInterface
      * @return  float   計算結果
      */
     public static function calculate(string $calc_formula, array $replace_value_list = []) : float;
+
+    /**
+     * 配列を後置記法として計算します。
+     *
+     * @param   array   $formulas   後置記法の計算式配列
+     * @return  float   計算結果
+     */
+    public static function calculatePostfix(array $formulas) : float;
 }

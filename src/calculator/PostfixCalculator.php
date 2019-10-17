@@ -23,6 +23,7 @@ namespace fw3\applications\calculator;
 use fw3\applications\calculator\interfaces\CalculatorInterface;
 use fw3\applications\calculator\traits\CalculatorTrait;
 
+
 /**
  * 後置記法（逆ポーランド記法）の計算式を用いて計算を行うクラス
  */
@@ -42,40 +43,28 @@ class PostfixCalculator implements CalculatorInterface
      */
     public static function calculate(string $calc_formula, array $replace_value_list = []) : float
     {
-        return static::calculatePostfix(\explode(' ', $calc_formula));
-    }
-
-    /**
-     * 配列を後置記法として計算します。
-     *
-     * @param   array   $formulas   後置記法の計算式配列
-     * @return  float   計算結果
-     */
-    public static function calculatePostfix(array $formulas) : float
-    {
-        if (empty($formulas)) {
-            return 0.0;
+        if (isset($replace_value_list[$calc_formula])) {
+            return (float) $replace_value_list[$calc_formula];
         }
 
-        $stack  = [];
+        $formulas   = \explode(' ',
+            static::calculateAggregateFunctions(
+                static::calculateMathFunctions(
+                    $calc_formula,
+                    $replace_value_list
+                    ),
+                $replace_value_list
+            )
+        );
 
-        foreach ($formulas as $operator) {
-            switch ((string) $operator) {
-                case static::ARITH_OP_ADD:
-                case static::ARITH_OP_SUB:
-                case static::ARITH_OP_MULTI:
-                case static::ARITH_OP_DIV:
-                case static::ARITH_OP_MOD:
-                    $operand_right  = \array_pop($stack);
-                    $operand_left   = \array_pop($stack);
-                    $stack[] = static::calculateArithmetic($operand_left, $operator, $operand_right);
-                    break;
-                default:
-                    $stack[] = $operator;
-                    break;
+        if (!empty($replace_value_list)) {
+            foreach ($formulas as $idx => $formula) {
+                if (isset($replace_value_list[$formula])) {
+                    $formulas[$idx] = $replace_value_list[$formula];
+                }
             }
         }
 
-        return (float) \end($stack);
+        return (float)  static::calculatePostfix($formulas);
     }
 }

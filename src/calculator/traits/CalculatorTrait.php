@@ -33,6 +33,11 @@ trait CalculatorTrait
      */
     protected static $encoding  = null;
 
+    /**
+     * @var string  使用を差し止める関数
+     */
+    protected static $denyFunctions = [];
+
     //==============================================
     // static method
     //==============================================
@@ -52,6 +57,21 @@ trait CalculatorTrait
     }
 
     /**
+     * 使用を差し止める関数を設定・取得します。
+     *
+     * @param   array           $deny_functions 使用を差し止める関数
+     * @return  array|string    使用を差し止める関数またはこのクラスパス
+     */
+    public static function denyFunctions(?array $deny_functions = null)
+    {
+        if (\func_num_args() === 0) {
+            return static::$denyFunctions;
+        }
+        static::$denyFunctions  = $deny_functions;
+        return static::class;
+    }
+
+    /**
      * 数学関数を実行します。
      *
      * @param   array   $numerical_formula  計算対象リスト
@@ -60,10 +80,21 @@ trait CalculatorTrait
      */
     public static function calculateMathFunctions(string $numerical_formula, array $replace_value_list = []) : string
     {
-        $callback   = function ($matches) use ($replace_value_list) {
+        $enable_deny_functions  = !empty(static::$denyFunctions);
+
+        if ($enable_deny_functions && in_array(static::MATH_FUNC, static::$denyFunctions, true)) {
+            return $numerical_formula;
+        }
+
+        $callback   = function ($matches) use ($enable_deny_functions, $replace_value_list) {
             $values     = null;
 
             $func_name  = $matches[1];
+
+            if ($enable_deny_functions && in_array($func_name, static::$denyFunctions, true)) {
+                return $matches[0];
+            }
+
             $values     = \explode(',', $matches[2]);
 
             foreach ($values as $idx => $value) {
@@ -117,10 +148,21 @@ trait CalculatorTrait
      */
     public static function calculateAggregateFunctions(string $numerical_formula, array $replace_value_list = []) : string
     {
-        $callback = function ($matches) use ($replace_value_list) {
+        $enable_deny_functions  = !empty(static::$denyFunctions);
+
+        if ($enable_deny_functions && in_array(static::AGGR_FUNC, static::$denyFunctions, true)) {
+            return $numerical_formula;
+        }
+
+        $callback = function ($matches) use ($enable_deny_functions, $replace_value_list) {
             $values     = null;
 
             $func_name  = $matches[1];
+
+            if ($enable_deny_functions && in_array($func_name, static::$denyFunctions, true)) {
+                return $matches[0];
+            }
+
             $values     = \explode(',', $matches[2]);
 
             foreach ($values as $idx => $value) {
@@ -365,5 +407,39 @@ trait CalculatorTrait
         }
 
         return $polish;
+    }
+
+    /**
+     * 配列を後置記法として計算します。
+     *
+     * @param   array   $formulas   後置記法の計算式配列
+     * @return  float   計算結果
+     */
+    public static function calculatePostfix(array $formulas) : float
+    {
+        if (empty($formulas)) {
+            return 0.0;
+        }
+
+        $stack  = [];
+
+        foreach ($formulas as $operator) {
+            switch ((string) $operator) {
+                case static::ARITH_OP_ADD:
+                case static::ARITH_OP_SUB:
+                case static::ARITH_OP_MULTI:
+                case static::ARITH_OP_DIV:
+                case static::ARITH_OP_MOD:
+                    $operand_right  = \array_pop($stack);
+                    $operand_left   = \array_pop($stack);
+                    $stack[] = static::calculateArithmetic($operand_left, $operator, $operand_right);
+                    break;
+                default:
+                    $stack[] = $operator;
+                    break;
+            }
+        }
+
+        return (float) \end($stack);
     }
 }
