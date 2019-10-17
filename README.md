@@ -43,10 +43,12 @@ var_dump([
 #### 後置記法計算機：PostfixCalculator
 
 ソフトウェアの世界ではよく見る後置記法（逆ポーランド記法）で記述された式を計算する計算機です。
-後置記法計算機では関数や実行時の値の置換は行えません。
+簡易的な集約、数学関数、実行時の値の置換を行えます。
 
-！！注意！！
+！！注意！！<br>
 それぞれのスタック間は半角スペースでセパレートされている必要があります。
+
+次の例のようなそこそこ複雑な式も取り扱えます。
 
 ```php
 <?php
@@ -56,5 +58,10 @@ use fw3\applications\calculator\PostfixCalculator;
 var_dump([
     PostfixCalculator::calculate('1 2 + 3 4 * 5 / -'),
     PostfixCalculator::calculate('12 34 +'),
+    PostfixCalculator::calculate(SUM(1,2,3) 4 + MIN(1,2,3) - MAX(1,2,3) * POW(2,POW(2,1)) /'),
+]);
+
+var_dump([
+    PostfixCalculator::calculate('A1 B2 +', ['A1' => 1, 'B2' => 2]),
 ]);
 ```

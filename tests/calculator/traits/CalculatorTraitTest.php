@@ -207,4 +207,28 @@ class CalculatorTraitTest extends TestCase
         $numerical_formula  = '1 + 2 - 3 * 4 / 5';
         $this->assertSame([1.0, 2.0, '+', 3.0, 4.0, '*', 5.0, '/', '-'], InfixCalculator::infixToPostfix($numerical_formula));
     }
+
+    /**
+     * 配列を後置記法として計算します。のテスト。
+     */
+    public function testCalculatePostfix() : void
+    {
+        $formulas   = [1.0];
+        $this->assertSame(1.0, InfixCalculator::calculatePostfix($formulas));
+
+        $formulas   = [1.0, 2.0, '+', 3.0, 4.0, '+', '+'];
+        $this->assertSame(10.0, InfixCalculator::calculatePostfix($formulas));
+
+        $formulas   = [1.0, 2.0, '+', 3.0, 4.0, '-', '*'];
+        $this->assertSame(-3.0, InfixCalculator::calculatePostfix($formulas));
+
+        $formulas   = [1.0, 2.0, 3.0, '*', '+', 4.0, '-'];
+        $this->assertSame(3.0, InfixCalculator::calculatePostfix($formulas));
+
+        $formulas   = [1.0, 2.0, 3.0, '*', '+', 4.0, '-'];
+        $this->assertSame(3.0, InfixCalculator::calculatePostfix($formulas));
+
+        $formulas   = [1.0, 2.0, '+', 3.0, 4.0, '*', 5.0, '/', '-'];
+        $this->assertSame(0.6000000000000001, InfixCalculator::calculatePostfix($formulas));
+    }
 }
