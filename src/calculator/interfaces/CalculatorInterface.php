@@ -180,6 +180,11 @@ interface CalculatorInterface
     // 数学関数
     //----------------------------------------------
     /**
+     * @var string  数学関数群
+     */
+    public const MATH_FUNC      = 'MATH_FUNC';
+
+    /**
      * @var string  数学関数：指数表現
      */
     public const MATH_FUNC_POW  = 'POW';
@@ -243,6 +248,11 @@ interface CalculatorInterface
     // 集約関数
     //----------------------------------------------
     /**
+     * @var string  集約関数群
+     */
+    public const AGGR_FUNC          = 'AGGR_FUNC';
+
+    /**
      * @var string  集約関数：含まれる要素数
      */
     public const AGGR_FUNC_COUNT    = 'COUNT';
@@ -294,6 +304,14 @@ interface CalculatorInterface
      * @return  string  文字列長を得る場合などに使う、文字エンコードまたはこのクラスパス
      */
     public static function encoding($encoding = null) : string;
+
+    /**
+     * 使用を差し止める関数を設定・取得します。
+     *
+     * @param   array           $deny_functions 使用を差し止める関数
+     * @return  array|string    使用を差し止める関数またはこのクラスパス
+     */
+    public static function denyFunctions(?array $deny_functions = null);
 
     /**
      * 数学関数を実行します。
